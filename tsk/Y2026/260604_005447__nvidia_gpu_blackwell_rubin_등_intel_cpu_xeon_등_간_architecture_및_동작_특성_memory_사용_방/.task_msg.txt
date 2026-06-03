@@ -1,1 +1,0 @@
-[2026-06-04T00:54:47+09:00] TASK_CREATED task_id=260604_005447__nvidia_gpu_blackwell_rubin_등_intel_cpu_xeon_등_간_architecture_및_동작_특성_memory_사용_방
