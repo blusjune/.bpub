@@ -26,9 +26,9 @@ TASK_LOG="${PER_TASK_ROOT}/${TASK_LOG_FILE}"
 TASK_MSG="${PER_TASK_ROOT}/${TASK_MSG_FILE}"
 
 
-TASK_DEF_FILE 구조: (summary, subtasks 항목만 mandatory)
+TASK_DEF_FILE 구조: (title, subtasks 항목만 mandatory)
 ---
-summary: overall task description
+title: task title as an overall task description
 subtasks:
   - subtask 1
   - subtask 2

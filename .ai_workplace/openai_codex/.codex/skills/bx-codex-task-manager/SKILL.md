@@ -37,7 +37,7 @@ Command files:
 
 Mandatory fields:
 
-    summary: overall task description
+    title: brief task description
     subtasks:
       - subtask 1
       - subtask 2
