@@ -1,0 +1,13 @@
+task_id: 260604_005447__nvidia_gpu_blackwell_rubin_등_intel_cpu_xeon_등_간_architecture_및_동작_특성_memory_사용_방
+title: Nvidia GPU (Blackwell, Rubin 등), Intel CPU (Xeon 등) 간 architecture 및 동작 특성,
+  memory 사용 방식의 차이점 이해를 위한 일련의 실험 계획, 실험, 성능 병목 분석 작업.
+status: 100_TBS
+created_at: '2026-06-04T00:54:47+09:00'
+updated_at: '2026-06-04T00:54:47+09:00'
+task_local_root: /home/blusjune/.work/openai_codex/.bpub/tsk
+task_remote_root: https://github.com/blusjune/.bpub/tsk
+per_task_root: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_005447__nvidia_gpu_blackwell_rubin_등_intel_cpu_xeon_등_간_architecture_및_동작_특성_memory_사용_방
+task_def: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_005447__nvidia_gpu_blackwell_rubin_등_intel_cpu_xeon_등_간_architecture_및_동작_특성_memory_사용_방/.task_def.yaml
+task_log: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_005447__nvidia_gpu_blackwell_rubin_등_intel_cpu_xeon_등_간_architecture_및_동작_특성_memory_사용_방/.task_log.txt
+task_msg: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_005447__nvidia_gpu_blackwell_rubin_등_intel_cpu_xeon_등_간_architecture_및_동작_특성_memory_사용_방/.task_msg.txt
+output_root: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_005447__nvidia_gpu_blackwell_rubin_등_intel_cpu_xeon_등_간_architecture_및_동작_특성_memory_사용_방/output
