@@ -1,0 +1,55 @@
+
+claude code에서 다음과 같은 task workflow management framework을 만들어서 사용했었어.
+
+- /bx.codex-tsk-enq <task_def_file> : <task_def_file> 에 정의된 작업들을 실행할 수 있도록 work queue에 삽입 (enqueue)하고, task_id를 생성 후 부여하고 사용자에게 알려준다. status는 100_TBS (to be started)로 설정.
+- /bx.codex-tsk-start <task_id> : <task_id> 작업을 실제로 실행 시작. 일단 시작되면 status는 200_WIP (work in progress)로 변경되고, 완료되면 300_DID (did it)로 변경되고, 문제 발생했으면 800_ERR (error)로 변경된다. 
+- /bx.codex-tsk-stop <task_id> : <task_id> 작업을 중단. status는 150_STP (stopped)으로 표시됨.
+- /bx.codex-tsk-deq <task_id> : <task_id> 작업을 work queue에서 제거 (dequeue). status가 아직 100_TBS 인 경우에만 가능.
+- /bx.codex-tsk-status <task_id> : <task_id> 작업의 현재 상태를 보여준다. <task_id>가 주어지지 않으면 존재하는 모든 task들의 상태를 table 형태로 보여준다 (각 task마다 <task_id>, title, status 정보 표시)
+- /bx.codex-tsk-grep <regular_expression> : task_id 혹은 TASK_DEF_FILE 내용 중에 <regular_expression>에 match되는 것이 있는 task들을 table 형태로 보여준다. (각 task마다 <task_id>, title, status, 첫 matched phrase 정보 표시)
+- /bx.codex-tsk-mark_done <task_id> : <task_id> 작업의 status를 300_DID 로 변경.
+- /bx.codex-tsk-mark_error <task_id> : <task_id> 작업의 status를 800_ERR 로 변경.
+
+
+작업은 enqueue ${PER_TASK_ROOT} directory 아래에서 수행되며, 작업 결과는 ${PER_TASK_ROOT}/output/ directory 내부에 체계적으로 저장된다. 그리고 모든 작업 단계마다 TASK_REMOTE_ROOT 아래에도 동일하게 update (git push) 된다. 다만, file size가 너무 큰 경우에는 git push 하지 않는 것으로 하고, 대신 이 상황을 TASK_MSG_FILE에 남겨둔다.
+
+
+TASK_LOCAL_ROOT="${HOME}/.bpub/tsk"
+TASK_REMOTE_ROOT="https://github.com/blusjune/.bpub/tsk"
+TASK_DEF_FILE=".task_def.yaml"
+TASK_LOG_FILE=".task_log.txt"
+TASK_MSG_FILE=".task_msg.txt"
+TASK_ID="$(date +%y%m%d_%H%M%S)__<task title>"
+PER_TASK_ROOT="${TASK_LOCAL_ROOT}/Y$(date +%Y)/$TASK_ID"
+TASK_DEF="${PER_TASK_ROOT}/${TASK_DEF_FILE}"
+TASK_LOG="${PER_TASK_ROOT}/${TASK_LOG_FILE}"
+TASK_MSG="${PER_TASK_ROOT}/${TASK_MSG_FILE}"
+
+
+TASK_DEF_FILE 구조: (summary, subtasks 항목만 mandatory)
+---
+summary: overall task description
+subtasks:
+  - subtask 1
+  - subtask 2
+  - ...
+special_requests:
+  - request 1
+  - request 2
+  - ...
+tags:
+  - tag 1
+  - tag 2
+  - ...
+acceptance_criteria:
+  - criterion 1
+  - criterion 2
+  - ...
+---
+
+Codex에서도 위와 같은 방식으로 하려면 어떻게 하면 좋을까?
+
+추가 요구사항으로서, 이 framework을 Javascript/HTML5 기반 application을 통해서 visual management dashboard를 통해서도 이용할 수 있으면 좋겠어.
+
+위의 작업을 간편하게 수행할 수 있는 bash script를 만들어줘. 그 전에 우선,  ~/.local/bin/ 아래의 bx-tsk 는 bx.codex.tsk 로 이름을 변경해줘.
+
