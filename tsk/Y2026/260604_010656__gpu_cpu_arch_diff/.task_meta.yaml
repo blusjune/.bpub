@@ -1,0 +1,12 @@
+task_id: 260604_010656__gpu_cpu_arch_diff
+title: gpu_cpu_arch_diff
+status: 100_TBS
+created_at: '2026-06-04T01:06:56+09:00'
+updated_at: '2026-06-04T01:06:56+09:00'
+task_local_root: /home/blusjune/.work/openai_codex/.bpub/tsk
+task_remote_root: https://github.com/blusjune/.bpub/tsk
+per_task_root: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_010656__gpu_cpu_arch_diff
+task_def: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_010656__gpu_cpu_arch_diff/.task_def.yaml
+task_log: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_010656__gpu_cpu_arch_diff/.task_log.txt
+task_msg: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_010656__gpu_cpu_arch_diff/.task_msg.txt
+output_root: /home/blusjune/.work/openai_codex/.bpub/tsk/Y2026/260604_010656__gpu_cpu_arch_diff/output
