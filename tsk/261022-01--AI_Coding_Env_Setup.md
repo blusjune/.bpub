@@ -1,5 +1,6 @@
 ## Requests
-
+- 작성하는 모든 program source code 혹은 script file의 가장 첫 줄에 comment로서 BUILD_ID="BMJ_$(date +%Y%m%d_%H%M%S)" 을 항상 넣고, revision 될 때마다 update 해줘.
+- 
 - Nvidia DGX Spark에서 chatbot service, vibe coding을 최고의 품질로 수행할 수 있도록 하는 Open Source LLM을 추천해줘.
 
 - Claude Code와 가장 유사한 coding agent 환경을 구축하려면?
