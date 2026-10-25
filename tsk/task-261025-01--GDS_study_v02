@@ -19,6 +19,7 @@
 ## 2. 사용자가 명시적으로 지시하는 내용
 
 ### 2.1 디렉터리와 실행 구조
+- 이 작업의 root directory는 /opt/work/ai_coding/agent_sandbox/tsk/tsk_20261025_144957--GDS_study/root/ 이다
 - 모든 소스, 스크립트, 보고서, DoE, 테스트는 `./root/src_pkg/` 아래 적절한 하위 디렉터리에 둔다.
 - 실행 결과는 `./root/exe_out/` 아래에 둔다. src_pkg와 exe_out은 완전히 격리한다.
 - 실험 스크립트는 하나의 top-level script가 호출한다. 예: `bx_gds_run_top.py`가 subtest 스크립트를 호출.
