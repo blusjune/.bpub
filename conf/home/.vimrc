@@ -1,9 +1,9 @@
 " 20230701_103934
 " 20261026_232156
 " Do this first to use VIM plug-in: curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+
 set nocompatible
-
-
 set nu ai cin
 set ignorecase
 
