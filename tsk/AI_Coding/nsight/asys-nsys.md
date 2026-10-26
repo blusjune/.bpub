@@ -232,7 +232,7 @@ Processing [capture.sqlite] with [/opt/nvidia/nsight-systems/2025.3.2/host-linux
 
 ```
 
-## answer-1
+## answer-1 (ChatGPT)
 
 
 **이번 통계로 분석 우선순위가 상당히 좁혀졌습니다. 가장 먼저 조사할 대상은 GPU의 `internal::gemvx::kernel<...>` 계열입니다. 이 계열이 수집된 전체 GPU kernel 실행 시간의 약 97.5%를 차지합니다.**
