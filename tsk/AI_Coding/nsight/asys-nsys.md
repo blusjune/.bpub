@@ -1,6 +1,115 @@
 
 
-## question-1
+## question: how to analyze
+
+```
+blusjune@spark-7121:~/..b/_/w/2026/_BMW.20261021.ai_llm_coding.d/root/deliverables/ai_coding/perf/nsys$ ls -alF
+total 141904
+drwxrwxr-x 2 blusjune blusjune      4096 Oct 26 23:36 ./
+drwxrwxr-x 6 blusjune blusjune      4096 Oct 26 23:18 ../
+-rw-rw-r-- 1 blusjune blusjune  38931930 Oct 26 23:35 capture.nsys-rep
+-rw-rw-r-- 1 blusjune blusjune     18583 Oct 26 23:36 capture.nsys-rep.stats.csv
+-rw-rw-r-- 1 blusjune blusjune         0 Oct 26 23:36 capture.nsys-rep.stats.stderr
+-rw-r--r-- 1 blusjune blusjune 106336256 Oct 26 23:36 capture.sqlite
+-rw-rw-r-- 1 blusjune blusjune       303 Oct 26 23:36 profile_analysis.md
+-rw-rw-r-- 1 blusjune blusjune       486 Oct 26 22:31 profile_manifest.json
+```
+
+이런 file들이 있는데,  nsight systems로 profiling 결과를   어떻게 볼 수 있는지?
+
+
+
+## answer
+**타임라인을 보시려면 `capture.nsys-rep`를 Nsight Systems GUI에서 여시면 됩니다.** 현재 디렉터리에서 다음 명령을 실행하세요.
+
+```bash
+nsys-ui capture.nsys-rep
+```
+
+또는 `nsys-ui`를 실행한 다음 **File → Open → `capture.nsys-rep`**를 선택하시면 됩니다. 분석용 GUI는 **수집에 사용한 Nsight Systems와 같거나 더 최신 버전**이어야 합니다. [Nsight Systems](https://docs.nvidia.com/nsight-systems/UserGuide/index.html?highlight=sm\&utm_source=chatgpt.com)
+
+### 1. 생성된 파일의 용도
+
+| 파일 | 용도 | 확인 방법 |
+|---|---|---|
+| **`capture.nsys-rep`** | 타임라인과 이벤트가 담긴 원본 분석 보고서 | **Nsight Systems GUI로 열기** |
+| `capture.sqlite` | 통계·SQL 분석용으로 내보낸 데이터베이스 | `nsys stats` 또는 SQLite |
+| `capture.nsys-rep.stats.csv` | 생성된 통계 요약 | 텍스트 편집기·스프레드시트 |
+| `capture.nsys-rep.stats.stderr` | 통계 생성 중 표준 오류 출력 | 현재 0바이트로 출력 내용 없음 |
+| `profile_analysis.md` | 이름상 분석 요약 Markdown 파일 | `cat` 또는 편집기 |
+| `profile_manifest.json` | 이름상 수집 조건·경로 등의 메타데이터 | `cat` 또는 편집기 |
+
+마지막 두 파일의 정확한 내용은 파일을 열어야 알 수 있습니다. **파일 목록만으로 CUDA 이벤트가 정상적으로 수집되었는지까지 판단할 수는 없습니다.**
+
+### 2. GUI에서 먼저 볼 부분
+
+보고서를 열고 왼쪽 트랙을 펼친 다음, 관심 시간 구간을 확대해서 보세요. 실제 표시되는 트랙은 수집 옵션에 따라 달라집니다.
+
+| 트랙 | 확인할 내용 | 판단할 때 주의할 점 |
+|---|---|---|
+| **NVTX** — NVIDIA Tools Extension | prefill, decode 등 코드에 지정한 작업 구간 | 애플리케이션이 마커를 넣고 수집해야 표시됩니다 |
+| **CUDA API** | CPU 측 CUDA 호출, 메모리 복사 요청, 동기화 | API 실행 시간과 GPU 작업 시간은 다릅니다 |
+| **CUDA GPU / Kernels** | 커널 실행 시간, 커널 사이 공백, 스트림 간 중첩 | 공백만으로 원인을 확정할 수 없습니다 |
+| **Memory transfers** | Host→Device, Device→Host 등의 복사 시간·크기 | 복사가 계산과 겹치는지 확인하세요 |
+| **CPU threads / OS runtime** | CPU 실행과 대기, 시스템 호출 | 관련 수집 옵션을 켠 경우 확인 가능합니다 |
+
+현재 AI coding 환경의 LLM 추론을 보시는 목적이라면, **① 모델 로딩·초기화 이후 실제 요청 구간을 찾고 → ② prefill/decode 구간을 구분하고 → ③ GPU 커널 사이 공백과 메모리 복사를 확인**하는 순서가 좋습니다.
+
+**GPU 커널 사이 공백이 곧 SSD 대기라는 뜻은 아닙니다.** CPU 스케줄링, 요청 대기, 동기화, 데이터 준비 등과 시간상 맞춰 보아야 합니다.
+
+### 3. 터미널에서 요약 확인
+
+GUI를 열기 전에 다음 명령으로 기본 통계를 볼 수 있습니다. `nsys stats`는 `.nsys-rep`와 `.sqlite`를 입력으로 사용할 수 있습니다. [Nsight Systems](https://docs.nvidia.com/nsight-systems/UserGuide/index.html?highlight=sm\&utm_source=chatgpt.com)
+
+```bash
+# 전체 기본 통계
+nsys stats capture.nsys-rep
+
+# CUDA 커널별 누적 시간과 CPU 측 CUDA API 통계
+nsys stats \
+  --report cuda_gpu_kern_sum \
+  --report cuda_api_sum \
+  capture.nsys-rep
+
+# GPU 작업을 개별 이벤트 단위로 확인
+nsys stats --report cuda_gpu_trace capture.nsys-rep
+```
+
+이미 생성된 요약 파일도 바로 확인하실 수 있습니다.
+
+```bash
+less -S capture.nsys-rep.stats.csv
+cat profile_analysis.md
+cat profile_manifest.json
+```
+
+**커널 요약의 `Time (%)`는 해당 보고서에 집계된 커널 시간 중 비중입니다. 전체 캡처 시간 대비 GPU 사용률로 해석하시면 안 됩니다.**
+
+### 4. SSH 접속 상태이거나 `nsys-ui`가 없을 때
+
+먼저 확인하세요.
+
+```bash
+command -v nsys-ui
+nsys --version
+echo "$DISPLAY"
+```
+
+SSH 터미널에서 화면 출력 환경이 없거나 GUI가 설치되지 않았다면, **`capture.nsys-rep` 하나를 GUI가 설치된 PC로 복사해서 여시면 됩니다.** `.nsys-rep`는 자체 완결형 보고서이므로 일반적인 GUI 분석을 위해 나머지 파일을 함께 복사할 필요는 없습니다. [Nsight Systems](https://docs.nvidia.com/nsight-systems/UserGuide/index.html?highlight=sm\&utm_source=chatgpt.com)
+
+공식 설명: [NVIDIA Nsight Systems User Guide](https://docs.nvidia.com/nsight-systems/UserGuide/index.html)
+
+
+
+----
+----
+----
+
+
+
+
+
+## question: analysis of the nsys stats
 - nsys stats --report ... capture.nsys-rep  명령 통해 다음 결과를 얻었어.  여기서 알 수 있는 내용을 알려줘.
 ```
 blusjune@spark-7121:/opt/work/ai_coding/root/deliverables/ai_coding/perf/nsys/.t$ nsys stats   --report cuda_gpu_kern_sum,cuda_api_sum,cuda_gpu_mem_time_sum --force-export=true  capture.nsys-rep  --format table
